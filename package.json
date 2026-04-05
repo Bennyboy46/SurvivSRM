@@ -1,0 +1,39 @@
+{
+  "name": "classpro-monorepo",
+  "version": "3.1.2",
+  "private": true,
+  "workspaces": [
+    "chatbot",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run sync:env && concurrently \"npm run dev:chatbot\" \"npm run dev:backend\"",
+    "dev:backend": "cd backend && go run src/main.go",
+    "dev:chatbot": "cd chatbot && npm run dev",
+    "sync:env": "copyfiles -E .env chatbot && copyfiles -E .env backend",
+    "build": "npm run build:chatbot && npm run build:backend",
+    "build:chatbot": "cd chatbot && npm run build",
+    "build:backend": "cd backend && go build -o bin/main src/main.go",
+    "start": "npm run start:chatbot",
+    "start:chatbot": "cd chatbot && npm run start",
+    "start:backend": "node -e \"require('child_process').execSync(process.platform === 'win32' ? 'backend/bin/main.exe' : 'backend/bin/main', { stdio: 'inherit' })\"",
+    "lint": "cd chatbot && npm run lint",
+    "install:all": "npm run install:chatbot && npm run install:backend",
+    "install:chatbot": "cd chatbot && npm install",
+    "install:backend": "cd backend && go mod tidy",
+    "clean": "rimraf chatbot/node_modules chatbot/.next backend/bin",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.10",
+    "concurrently": "^8.2.2",
+    "copyfiles": "^2.4.1",
+    "rimraf": "^5.0.7"
+  },
+  "engines": {
+    "node": ">=20.11.0",
+    "go": ">=1.23.0"
+  }
+} 
