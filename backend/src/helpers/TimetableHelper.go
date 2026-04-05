@@ -49,6 +49,11 @@ func (t *Timetable) GetTimetable(batchNumber int) (*types.TimetableResult, error
 		}, nil
 	}
 
+	// Auto-detect the best matching batch from course slots first.
+	if detected := t.mapWithFallback(*courseList); detected != nil {
+		return detected, nil
+	}
+
 	// Select the batch based on the input parameter
 	var selectedBatch types.Batch
 	switch batchNumber {

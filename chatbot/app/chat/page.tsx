@@ -28,6 +28,18 @@ type TimetableResponse = {
   };
 };
 
+type UserResponse = {
+  name?: string;
+  regNumber?: string;
+  email?: string;
+};
+
+type UserIdentity = {
+  name?: string;
+  regNumber?: string;
+  email?: string;
+};
+
 type LooseRecord = Record<string, unknown>;
 
 function asRecord(value: unknown): LooseRecord | null {
@@ -56,6 +68,30 @@ function normalizeSlot(value: unknown): TimetableSlot | null {
 
   if (!code && !name && !slot) return null;
   return { code, name, slot };
+}
+
+function extractUserIdentity(payload: unknown): UserIdentity {
+  const root = asRecord(payload);
+  if (!root) return {};
+
+  const unwrapped = asRecord(root.data) ?? root;
+  const name = typeof unwrapped.name === "string"
+    ? unwrapped.name
+    : typeof unwrapped.Name === "string"
+      ? unwrapped.Name
+      : undefined;
+  const regNumber = typeof unwrapped.regNumber === "string"
+    ? unwrapped.regNumber
+    : typeof unwrapped.RegNumber === "string"
+      ? unwrapped.RegNumber
+      : undefined;
+  const email = typeof unwrapped.email === "string"
+    ? unwrapped.email
+    : typeof unwrapped.Email === "string"
+      ? unwrapped.Email
+      : undefined;
+
+  return { name, regNumber, email };
 }
 
 function extractTimetable(payload: unknown): { batch?: string; schedule: TimetableDay[] } {
@@ -98,11 +134,16 @@ export default async function ChatPage() {
   }
 
   const timetableRes = await fetchBackendJson("/timetable", session);
+  const userRes = await fetchBackendJson("/user", session);
   if (!timetableRes.ok || (timetableRes.status === 401 || timetableRes.status === 404)) {
+    redirect("/");
+  }
+  if (!userRes.ok || (userRes.status === 401 || userRes.status === 404)) {
     redirect("/");
   }
 
   const parsed = extractTimetable(normalizeBackendPayload<TimetableResponse>(timetableRes.data) ?? timetableRes.data);
+  const user = extractUserIdentity(normalizeBackendPayload<UserResponse>(userRes.data) ?? userRes.data);
 
-  return <ChatClient schedule={parsed.schedule} batch={parsed.batch} />;
+  return <ChatClient schedule={parsed.schedule} batch={parsed.batch} user={user} />;
 }

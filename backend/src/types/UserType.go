@@ -2,6 +2,7 @@ package types
 
 type User struct {
 	Name       string `json:"name"`
+	Email      string `json:"email"`
 	Mobile     string `json:"mobile"`
 	Program    string `json:"program"`
 	Semester   int    `json:"semester"`

@@ -43,6 +43,8 @@ func GetUser(rawPage string) (*types.User, error) {
 			switch key {
 			case "Name":
 				data.Name = value
+			case "Email", "Email ID", "E-Mail", "SRM Email", "SRM Mail ID":
+				data.Email = value
 			case "Program":
 				data.Program = value
 			case "Combo / Batch":

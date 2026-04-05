@@ -21,6 +21,11 @@ type TimetableDay = {
 interface ChatClientProps {
   schedule?: TimetableDay[];
   batch?: string;
+  user?: {
+    name?: string;
+    regNumber?: string;
+    email?: string;
+  };
 }
 
 const SUGGESTIONS = [
@@ -30,7 +35,7 @@ const SUGGESTIONS = [
   "Is there any chance I can pass this sem? 😢",
 ];
 
-export default function ChatClient({ schedule = [], batch }: ChatClientProps) {
+export default function ChatClient({ schedule = [], batch, user }: ChatClientProps) {
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -133,6 +138,13 @@ export default function ChatClient({ schedule = [], batch }: ChatClientProps) {
               <div style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
                 {batch ? `Batch ${batch}` : "Batch detected from backend"}
               </div>
+              {(user?.name || user?.regNumber || user?.email) && (
+                <div style={{ fontSize: "0.74rem", color: "var(--text-secondary)", marginTop: "0.25rem", lineHeight: 1.45 }}>
+                  {user?.name ? `${user.name}` : ""}
+                  {user?.regNumber ? `${user?.name ? " • " : ""}${user.regNumber}` : ""}
+                  {user?.email ? `${user?.name || user?.regNumber ? " • " : ""}${user.email}` : ""}
+                </div>
+              )}
             </div>
           </div>
 
