@@ -6,6 +6,7 @@ type TableSlot = {
   code?: string;
   name?: string;
   slot?: string;
+  roomNo?: string;
 };
 
 type DaySchedule = {
@@ -140,6 +141,11 @@ export default function DayOrderNavbar({ schedule = [], batch }: DayOrderNavbarP
                                 <div style={{ fontSize: "0.67rem", color: "var(--text-muted)", marginTop: "0.22rem" }}>
                                   {slot.slot ? `Mapped slot: ${slot.slot}` : "Mapped slot: -"}
                                 </div>
+                                {slot.roomNo && (
+                                  <div style={{ fontSize: "0.67rem", color: "var(--text-secondary)", marginTop: "0.18rem" }}>
+                                    {`Classroom: ${slot.roomNo}`}
+                                  </div>
+                                )}
                               </>
                             ) : (
                               <span style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>Free</span>

@@ -12,6 +12,7 @@ type TimetableSlot = {
   code?: string;
   name?: string;
   slot?: string;
+  roomNo?: string;
 };
 
 type TimetableDay = {
@@ -65,9 +66,14 @@ function normalizeSlot(value: unknown): TimetableSlot | null {
   const code = typeof rec.code === "string" ? rec.code : typeof rec.Code === "string" ? rec.Code : undefined;
   const name = typeof rec.name === "string" ? rec.name : typeof rec.Name === "string" ? rec.Name : undefined;
   const slot = typeof rec.slot === "string" ? rec.slot : typeof rec.Slot === "string" ? rec.Slot : undefined;
+  const roomNo = typeof rec.roomNo === "string"
+    ? rec.roomNo
+    : typeof rec.RoomNo === "string"
+      ? rec.RoomNo
+      : undefined;
 
-  if (!code && !name && !slot) return null;
-  return { code, name, slot };
+  if (!code && !name && !slot && !roomNo) return null;
+  return { code, name, slot, roomNo };
 }
 
 function extractUserIdentity(payload: unknown): UserIdentity {
