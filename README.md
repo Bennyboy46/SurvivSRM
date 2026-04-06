@@ -49,6 +49,7 @@ Create chatbot/.env.local:
 GOSCRAPER_URL=http://localhost:8080
 COOKIE_SECRET=your_random_cookie_secret
 GROQ_API_KEY=your_groq_api_key
+SYSTEM_PROMPT=your_custom_system_prompt_here
 ```
 
 ### 3. Install Dependencies

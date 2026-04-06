@@ -168,16 +168,7 @@ function getCurrentContext() {
 
 const groq = new Groq({ apiKey: GROQ_API_KEY });
 const modelName = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
-const systemPrompt = `You are an intelligent academic assistant for an SRMIST student.
-
-Rules:
-- Use ONLY the provided data.
-- Be concise and direct.
-- If asked about day order, prefer calendar/holiday data.
-- If asked about attendance, use the supplied attendance data.
-- If data is missing, say so briefly.
-- Never mention implementation details, source systems, or internal route names.
-- Output plain text or short markdown only when helpful.`;
+const systemPrompt = process.env.SYSTEM_PROMPT || "";
 
 export async function POST(req: Request) {
   try {

@@ -5,16 +5,18 @@ import (
 	"goscraper/src/types"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
-func parseBatchNumber(raw string) int {
+func parseBatchNumber(raw string) (int, bool) {
+	raw = strings.TrimSpace(raw)
 	if raw == "" {
-		return 1
+		return 0, false
 	}
 
 	if n, err := strconv.Atoi(raw); err == nil {
 		if n == 1 || n == 2 {
-			return n
+			return n, true
 		}
 	}
 
@@ -27,12 +29,12 @@ func parseBatchNumber(raw string) int {
 		match := regexp.MustCompile(pattern).FindStringSubmatch(raw)
 		if len(match) > 1 {
 			if n, err := strconv.Atoi(match[1]); err == nil {
-				return n
+				return n, true
 			}
 		}
 	}
 
-	return 1
+	return 0, false
 }
 
 func GetTimetable(token string) (*types.TimetableResult, error) {
@@ -42,8 +44,11 @@ func GetTimetable(token string) (*types.TimetableResult, error) {
 		return &types.TimetableResult{}, err
 	}
 
-	batchNum := parseBatchNumber(user.Batch)
-	timetable, err := scraper.GetTimetable(batchNum)
+	batchNum, hasBatch := parseBatchNumber(user.Batch)
+	if !hasBatch {
+		batchNum = 1
+	}
+	timetable, err := scraper.GetTimetable(batchNum, hasBatch)
 
 	return timetable, err
 }

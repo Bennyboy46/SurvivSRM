@@ -37,7 +37,7 @@ func NewTimetable(cookie string) *Timetable {
 	return &Timetable{cookie: cookie}
 }
 
-func (t *Timetable) GetTimetable(batchNumber int) (*types.TimetableResult, error) {
+func (t *Timetable) GetTimetable(batchNumber int, trustUserBatch bool) (*types.TimetableResult, error) {
 	coursePage := NewCoursePage(t.cookie)
 	courseList, err := coursePage.GetCourses()
 	if err != nil {
@@ -49,9 +49,11 @@ func (t *Timetable) GetTimetable(batchNumber int) (*types.TimetableResult, error
 		}, nil
 	}
 
-	// Auto-detect the best matching batch from course slots first.
-	if detected := t.mapWithFallback(*courseList); detected != nil {
-		return detected, nil
+	// Only auto-detect when user profile batch is missing/uncertain.
+	if !trustUserBatch {
+		if detected := t.mapWithFallback(*courseList); detected != nil {
+			return detected, nil
+		}
 	}
 
 	// Select the batch based on the input parameter
